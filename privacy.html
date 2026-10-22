@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AICoHosts Privacy</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="What our AI hosts keep from Twitch chat, why, for how long, and how to delete it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a studio "on air soon" slate, one banner, then a four-seat host lineup, then contact. Single dark broadcast look by choice. */
+:root{
+  --bg:#0d1120; --panel:#151a2d; --line:#262d47; --fg:#eef0f7; --muted:#9ba3bf;
+  --tally:#ff4a3b; --twitch:#9146ff; --twitch-hi:#a970ff;
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body:"Figtree", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.55;margin:0}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+header{padding-block:22px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:.02em;text-transform:uppercase;text-decoration:none}
+.brand span{color:#ff6656;-webkit-text-stroke:.6px #ff6656;paint-order:stroke fill}
+.tally{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:999px;padding:6px 14px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--tally);box-shadow:0 0 0 0 rgba(255,74,59,.6);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(255,74,59,0)}100%{box-shadow:0 0 0 0 rgba(255,74,59,0)}}
+
+.hero{padding-block:56px 64px;border-bottom:1px solid var(--line)}
+.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(44px,8.4vw,104px);line-height:.95;letter-spacing:-.035em;margin:0;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--tally)}
+.banner{margin-top:32px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:32px;align-items:end}
+.banner p{margin:0;font-size:clamp(18px,2.1vw,22px);color:var(--fg);max-width:36ch}
+.cta{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.btn{display:inline-flex;align-items:center;gap:12px;background:var(--twitch);color:#fff;text-decoration:none;font-weight:600;font-size:18px;padding:16px 24px;border-radius:12px;transition:background .15s}
+.btn:hover{background:var(--twitch-hi)}
+.btn:focus-visible,.copy:focus-visible,.brand:focus-visible,.mail:focus-visible{outline:3px solid var(--tally);outline-offset:3px}
+.btn svg{width:22px;height:22px;flex:none}
+.cta small{color:var(--muted);font-size:14px}
+
+.hosts{padding-block:64px}
+.hosts h2,.contact h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,4.4vw,48px);letter-spacing:-.02em;margin:8px 0 0;text-wrap:balance}
+.intro{color:var(--muted);max-width:60ch;margin:12px 0 0}
+.grid{margin-top:36px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.host{display:flex;flex-direction:column;min-width:0}
+.frame{position:relative;aspect-ratio:1/1;max-width:100%;border-radius:14px;overflow:hidden;background:var(--panel);border:1px solid var(--line)}
+.frame img{width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block}
+.chip{position:absolute;left:10px;top:10px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:rgba(13,17,32,.82);border:1px solid var(--line);color:var(--fg);padding:5px 9px;border-radius:6px;display:inline-flex;gap:7px;align-items:center}
+.chip i{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+.chip.live i{background:var(--tally)}
+.chip.rent i{background:var(--twitch-hi)}
+.host h3{font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:-.015em;margin:16px 0 0;line-height:1.1}
+.role{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--tally);margin-top:6px}
+.host p{margin:10px 0 0;color:var(--muted);font-size:16px}
+.chan{margin-top:10px;font-family:var(--mono);font-size:13px;color:var(--twitch-hi);text-decoration:none;overflow-wrap:anywhere}
+.chan:hover{text-decoration:underline}
+.chan:focus-visible{outline:3px solid var(--tally);outline-offset:3px}
+.duo{margin-top:28px;border-top:1px solid var(--line);padding-top:18px;color:var(--muted);font-size:15px}
+.duo b{color:var(--fg);font-weight:600}
+
+.contact{padding-block:56px 72px;border-top:1px solid var(--line)}
+.contact-row{margin-top:20px;display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.mail{font-family:var(--display);font-weight:700;font-size:clamp(22px,4vw,36px);letter-spacing:-.01em;text-decoration:none;overflow-wrap:anywhere;user-select:all}
+.mail:hover{color:var(--tally)}
+.copy{font:inherit;font-size:14px;font-weight:600;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 14px;cursor:pointer}
+.copy:hover{border-color:var(--muted)}
+footer{padding-block:24px 36px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+footer .bar{gap:8px 24px}
+
+.nav{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.nav a.link{font-weight:600;font-size:15px;text-decoration:none;color:var(--fg)}
+.nav a.link:hover{color:var(--tally)}
+.nav a.link:focus-visible,footer a:focus-visible{outline:3px solid var(--tally);outline-offset:3px}
+footer a{color:var(--fg)}
+.story{padding-block:48px 64px}
+.story h1{font-family:var(--display);font-weight:800;font-size:clamp(38px,6.4vw,72px);line-height:1;letter-spacing:-.03em;margin:10px 0 0;text-wrap:balance}
+.prose{max-width:62ch;margin-top:32px;display:flex;flex-direction:column;gap:18px;font-size:18px}
+.prose p{margin:0}
+.prose h2{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.4vw,32px);letter-spacing:-.015em;margin:28px 0 0}
+.prose ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px;color:var(--fg)}
+.prose .quiet{color:var(--muted)}
+.prose .mono{font-family:var(--mono);font-size:.92em;user-select:all;overflow-wrap:anywhere}
+.prose a{color:var(--twitch-hi)}
+.prose code{font-family:var(--mono);font-size:.92em;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.keep{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 20px;margin:0;padding:18px 20px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.keep dt{margin:0;min-width:0}
+.keep dd{margin:0;font-family:var(--mono);font-size:14px;color:var(--tally);text-align:right;white-space:nowrap}
+@media (max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.banner{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:440px){.grid{gap:16px}.host h3{font-size:22px}.host p{font-size:15px}.hero{padding-block:36px 48px}}
+@media (prefers-reduced-motion:reduce){.dot{animation:none}.btn{transition:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="./"><span>AI</span>CoHosts.ai</a>
+    <nav class="nav"><a class="link" href="./">Home</a><a class="link" href="about.html">About</a></nav>
+  </div>
+</header>
+
+<main>
+  <section class="story">
+    <div class="wrap">
+      <div class="label">Privacy &middot; updated 22 October 2026</div>
+      <h1>Your chat, and what our hosts keep</h1>
+      <div class="prose">
+        <p>AICoHosts runs AI hosts on Twitch, such as Cecilia on <a href="https://www.twitch.tv/ceciliaplayspoker">twitch.tv/ceciliaplayspoker</a>. When you chat in a host's channel, the host reads your messages so it can answer you. This page says what we keep, why, for how long, and how to delete it.</p>
+
+        <h2>What we keep</h2>
+        <ul>
+          <li>Your Twitch username and the messages you send in the host's channel.</li>
+          <li>Things you do in the show: votes, points on the leaderboard, and subs, bits or raids so the host can thank you.</li>
+          <li>Up to five short notes the host keeps about regulars, about the show only. For example: &ldquo;always votes to go all in.&rdquo;</li>
+          <li>What the host says back to you.</li>
+        </ul>
+        <p class="quiet">We don't ask for or keep your email, real name, location or payment details, and we only read chat in our hosts' own channels.</p>
+
+        <h2>Why</h2>
+        <ul>
+          <li>To read and answer your messages and run votes and the leaderboard.</li>
+          <li>To keep chat safe: every message and every reply goes through safety filters, and we keep a record of what they did.</li>
+          <li>So the host can remember regulars between streams.</li>
+          <li>To fix problems and make the show better.</li>
+        </ul>
+        <p>We never sell your data, never use it for advertising, and never put it on a public website or database.</p>
+
+        <h2>How long we keep it</h2>
+        <dl class="keep">
+          <dt>Recent chat the host remembers</dt><dd>30 days</dd>
+          <dt>Safety records and show logs</dt><dd>90 days</dd>
+          <dt>Notes about regulars, points</dt><dd>until you ask us to delete them</dd>
+        </dl>
+
+        <h2>Delete your chat</h2>
+        <p>Type <code>!forgetme</code> in the host's chat. The host deletes what you said and what it noted about you, removes your points, and stops reading your messages. Type <code>!rememberme</code> if you change your mind. You can also email <span class="mono">aicohosts@gmail.com</span> with your Twitch username, and we'll delete it within 30 days.</p>
+
+        <h2>Who helps us run the show</h2>
+        <p>Your messages pass through services that run the show for us, and only for that purpose:</p>
+        <ul>
+          <li>Twitch, where chat happens (<a href="https://www.twitch.tv/p/en/legal/privacy-notice/">Twitch's privacy notice</a>).</li>
+          <li>RunPod, the servers the hosts run on.</li>
+          <li>Supabase, the database for chat memory, notes and points.</li>
+          <li>AI services that check messages and write the host's replies: Typesafe (safety checks), OpenRouter and the model providers it routes to, and Anthropic.</li>
+        </ul>
+
+        <h2>Questions</h2>
+        <p>Email <span class="mono">aicohosts@gmail.com</span>. If we change this page, the date at the top changes too.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap bar">
+    <span>&copy; 2026 AICoHosts &middot; <a href="./">Home</a> &middot; <a href="about.html">About</a></span>
+    <span>All hosts are original AI characters, created lawfully with licensed tools. None is based on a real person.</span>
+  </div>
+</footer>
+
+</body>
+</html>
